@@ -306,7 +306,8 @@ typedef uint16_t adc_channels_num_t;
  */
 typedef enum {
   ADC_ERR_DMAFAILURE = 0,                   /**< DMA operations failure.    */
-  ADC_ERR_OVERFLOW = 1                      /**< ADC overflow condition.    */
+  ADC_ERR_OVERFLOW = 1,                     /**< ADC overflow condition.    */
+  ADC_ERR_WATCHDOG = 2                      /**< ADC watchdog condition.    */
 } adcerror_t;
 
 /**
@@ -384,6 +385,16 @@ typedef struct {
    *          0...9.
    */
   uint32_t                  smpr2;
+  /**
+   * @brief   ADC watchdog higher threshold register.
+   * @details This filed defines the higher threshold for the analog watchdog.
+   */
+  uint16_t                  htr;
+  /**
+   * @brief   ADC watchdog lower threshold register.
+   * @details This filed defines the lower threshold for the analog watchdog.
+   */
+  uint16_t                  ltr;
   /**
    * @brief   ADC SQR1 register initialization data.
    * @details Conversion group sequence 13...16 + sequence length.
@@ -526,6 +537,14 @@ struct ADCDriver {
 #define ADC_SMPR1_SMP_VREF(n)   ((n) << 21) /**< @brief Voltage Reference
                                                  sampling time.             */
 #define ADC_SMPR1_SMP_VBAT(n)   ((n) << 24) /**< @brief VBAT sampling time. */
+/** @} */
+
+/**
+ * @name    Threshold settings helper macros
+ * @{
+ */
+#define ADC_HTR(n)              ((n > ADC_HTR_HT) ? ADC_HTR_HT : n) /**< @brief higher threshold limitation */
+#define ADC_LTR(n)              ((n > ADC_LTR_LT) ? ADC_LTR_LT : n) /**< @brief lower threshold limitation  */
 /** @} */
 
 /*===========================================================================*/

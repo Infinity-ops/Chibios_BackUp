@@ -25,6 +25,8 @@
 #include "ch.h"
 #include "hal.h"
 
+#include "i2s_lld.h"
+
 #if HAL_USE_SPI || defined(__DOXYGEN__)
 
 /*===========================================================================*/

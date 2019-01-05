@@ -76,6 +76,15 @@
 #endif
 
 /**
+ * @brief   I2C data transfer use dma switch.
+ * @details If set to @p TRUE the support for I2C DMA is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_I2C_USE_DMA) || defined(__DOXYGEN__)
+#define STM32_I2C_USE_DMA               TRUE
+#endif
+
+/**
  * @brief   I2C1 interrupt priority level setting.
  */
 #if !defined(STM32_I2C_I2C1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -227,6 +236,7 @@
 #error "I2C driver activated but no I2C peripheral assigned"
 #endif
 
+#if STM32_I2C_USE_DMA
 #if STM32_I2C_USE_I2C1 &&                                                   \
     !STM32_DMA_IS_VALID_ID(STM32_I2C_I2C1_RX_DMA_STREAM,                    \
                            STM32_I2C1_RX_DMA_MSK)
@@ -266,6 +276,7 @@
 #if !defined(STM32_DMA_REQUIRED)
 #define STM32_DMA_REQUIRED
 #endif
+#endif /* STM32_I2C_USE_DMA */
 
 /* Check clock range. */
 #if defined(STM32F4XX)
@@ -386,6 +397,7 @@ struct I2CDriver {
    * @brief     Current slave address without R/W bit.
    */
   i2caddr_t                 addr;
+#if STM32_I2C_USE_DMA
   /**
    * @brief RX DMA mode bit mask.
    */
@@ -402,6 +414,24 @@ struct I2CDriver {
    * @brief     Transmit DMA channel.
    */
   const stm32_dma_stream_t  *dmatx;
+#else
+  /**
+   * @brief     Receive buffer.
+   */
+  uint8_t                   *rxbuf;
+  /**
+   * @brief     Receive buffer size.
+   */
+  size_t                    rxbytes;
+  /**
+   * @brief     Transmit buffer.
+   */
+   const uint8_t            *txbuf;
+  /**
+   * @brief     Transmit buffer size.
+   */
+  size_t                    txbytes;
+#endif /* STM32_I2C_USE_DMA */
   /**
    * @brief     Pointer to the I2Cx registers block.
    */
